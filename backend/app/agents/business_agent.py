@@ -10,7 +10,7 @@ BASE_DIR = Path(__file__).resolve().parents[2]
 load_dotenv(BASE_DIR / ".env")
 
 
-class StrategyAgent:
+class BusinessAgent:
     def __init__(self):
         api_key = os.getenv("GROQ_API_KEY")
 
@@ -27,36 +27,32 @@ class StrategyAgent:
         )
 
         self.prompt = ChatPromptTemplate.from_template("""
-You are a world-class business strategy consultant.
+You are an experienced business consultant.
 
 Analyze the following business idea.
 
 Business Idea:
 {idea}
 
-Create a complete business strategy including:
+Provide:
 
-# Executive Strategy
+1. Business Summary
 
-# Go-to-Market Plan
+2. Target Customers
 
-# Branding Strategy
+3. Main Problem Being Solved
 
-# Marketing Strategy
+4. Unique Value Proposition
 
-# Customer Acquisition Strategy
+5. Strengths
 
-# Revenue Growth Strategy
+6. Weaknesses
 
-# Scaling Plan
+7. Opportunities
 
-# Risk Mitigation
+8. Risks
 
-# 12-Month Roadmap
-
-Provide actionable recommendations.
-
-Respond in professional Markdown.
+Respond in clean Markdown.
 """)
 
     def analyze(self, idea: str):

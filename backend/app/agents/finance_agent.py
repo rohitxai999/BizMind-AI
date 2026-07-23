@@ -1,33 +1,65 @@
-import pandas as pd
+import os
+from pathlib import Path
+
+from dotenv import load_dotenv
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_groq import ChatGroq
+
+# Load the .env file from the backend directory
+BASE_DIR = Path(__file__).resolve().parents[2]
+load_dotenv(BASE_DIR / ".env")
 
 
 class FinanceAgent:
+    def __init__(self):
+        api_key = os.getenv("GROQ_API_KEY")
 
-    def analyze(self, file_path):
+        if not api_key:
+            raise ValueError(
+                "GROQ_API_KEY not found. Please create backend/.env and add:\n"
+                "GROQ_API_KEY=your_groq_api_key"
+            )
 
-        df = pd.read_csv(file_path)
+        self.llm = ChatGroq(
+            model="llama-3.3-70b-versatile",
+            api_key=api_key,
+            temperature=0.3,
+        )
 
-        revenue = df["Revenue"].sum()
+        self.prompt = ChatPromptTemplate.from_template("""
+You are an experienced startup financial advisor.
 
-        expenses = df["Expenses"].sum()
+Analyze the following business idea.
 
-        profit = revenue - expenses
+Business Idea:
+{idea}
 
-        margin = (profit / revenue) * 100
+Generate a financial report containing:
 
+# Startup Cost Estimate
 
-        if margin < 20:
-            risk = "High"
-        elif margin < 50:
-            risk = "Medium"
-        else:
-            risk = "Low"
+# Revenue Model
 
+# Pricing Strategy
 
-        return {
-            "revenue": int(revenue),
-            "expenses": int(expenses),
-            "profit": int(profit),
-            "profit_margin": round(margin, 2),
-            "risk": risk
-        }
+# Monthly Revenue Estimate
+
+# Monthly Expenses
+
+# Profit Margin Estimate
+
+# Break-even Analysis
+
+# Funding Recommendation
+
+# Financial Risks
+
+Use realistic assumptions.
+
+Respond in professional Markdown.
+""")
+
+    def analyze(self, idea: str):
+        chain = self.prompt | self.llm
+        result = chain.invoke({"idea": idea})
+        return result.content

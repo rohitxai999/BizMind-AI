@@ -10,7 +10,7 @@ BASE_DIR = Path(__file__).resolve().parents[2]
 load_dotenv(BASE_DIR / ".env")
 
 
-class StrategyAgent:
+class MarketAgent:
     def __init__(self):
         api_key = os.getenv("GROQ_API_KEY")
 
@@ -27,34 +27,30 @@ class StrategyAgent:
         )
 
         self.prompt = ChatPromptTemplate.from_template("""
-You are a world-class business strategy consultant.
+You are an expert market research analyst.
 
 Analyze the following business idea.
 
 Business Idea:
 {idea}
 
-Create a complete business strategy including:
+Generate a detailed market research report including:
 
-# Executive Strategy
+# Industry Overview
 
-# Go-to-Market Plan
+# Market Size
 
-# Branding Strategy
+# Target Audience
 
-# Marketing Strategy
+# Customer Pain Points
 
-# Customer Acquisition Strategy
+# Competitor Analysis
 
-# Revenue Growth Strategy
+# Market Trends
 
-# Scaling Plan
+# Business Opportunities
 
-# Risk Mitigation
-
-# 12-Month Roadmap
-
-Provide actionable recommendations.
+# Threats
 
 Respond in professional Markdown.
 """)

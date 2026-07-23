@@ -1,21 +1,32 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.routes import router
+from app.routes.analysis import router as analysis_router
 
 
 app = FastAPI(
     title="BizMind AI",
-    description="AI Business Intelligence Assistant",
-    version="1.0"
+    version="1.0.0",
+    description="Autonomous Multi-Agent Business Intelligence Platform"
 )
 
 
-app.include_router(router)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+app.include_router(analysis_router)
 
 
 @app.get("/")
-def home():
-
+async def root():
     return {
-        "message": "BizMind AI Backend Running 🚀"
+        "message": "Welcome to BizMind AI API",
+        "status": "running",
+        "version": "1.0.0"
     }
