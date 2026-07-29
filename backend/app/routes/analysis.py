@@ -1,8 +1,13 @@
 from fastapi import APIRouter
-from pydantic import BaseModel
 
-from app.services.agent_manager import AgentManager
+from app.schemas.analysis import (
+    BusinessInput,
+    BusinessResponse,
+)
 
+from app.services.business_service import (
+    BusinessService,
+)
 
 router = APIRouter(
     prefix="/analysis",
@@ -10,19 +15,9 @@ router = APIRouter(
 )
 
 
-manager = AgentManager()
-
-
-class BusinessRequest(BaseModel):
-    idea: str
-
-
-@router.post("/")
-async def analyze_business(request: BusinessRequest):
-
-    report = manager.analyze_business(request.idea)
-
-    return {
-        "success": True,
-        "report": report
-    }
+@router.post(
+    "/",
+    response_model=BusinessResponse
+)
+def analyze_business(data: BusinessInput):
+    return BusinessService.analyze(data)
