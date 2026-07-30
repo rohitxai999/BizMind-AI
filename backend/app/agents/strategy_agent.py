@@ -1,65 +1,22 @@
-import os
-from pathlib import Path
-
-from dotenv import load_dotenv
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_groq import ChatGroq
-
-# Load the .env file from the backend directory
-BASE_DIR = Path(__file__).resolve().parents[2]
-load_dotenv(BASE_DIR / ".env")
-
-
 class StrategyAgent:
-    def __init__(self):
-        api_key = os.getenv("GROQ_API_KEY")
+    def generate_strategy(self, revenue, profit, risk):
+        recommendations = []
 
-        if not api_key:
-            raise ValueError(
-                "GROQ_API_KEY not found. Please create backend/.env and add:\n"
-                "GROQ_API_KEY=your_groq_api_key"
-            )
+        if risk == "High":
+            recommendations.append("Protect cash flow and reduce unnecessary spending immediately.")
 
-        self.llm = ChatGroq(
-            model="llama-3.3-70b-versatile",
-            api_key=api_key,
-            temperature=0.4,
-        )
+        if profit < revenue * 0.2:
+            recommendations.append("Focus on higher-margin products and tighten pricing discipline.")
 
-        self.prompt = ChatPromptTemplate.from_template("""
-You are a world-class business strategy consultant.
+        if revenue < 100000:
+            recommendations.append("Increase targeted marketing on the strongest-performing channels.")
 
-Analyze the following business idea.
+        recommendations.append("Improve customer retention with loyalty and service programs.")
+        recommendations.append("Automate repeatable workflows to improve operating efficiency.")
 
-Business Idea:
-{idea}
+        if not recommendations:
+            recommendations.append("Maintain the current growth momentum and monitor key KPIs weekly.")
 
-Create a complete business strategy including:
-
-# Executive Strategy
-
-# Go-to-Market Plan
-
-# Branding Strategy
-
-# Marketing Strategy
-
-# Customer Acquisition Strategy
-
-# Revenue Growth Strategy
-
-# Scaling Plan
-
-# Risk Mitigation
-
-# 12-Month Roadmap
-
-Provide actionable recommendations.
-
-Respond in professional Markdown.
-""")
-
-    def analyze(self, idea: str):
-        chain = self.prompt | self.llm
-        result = chain.invoke({"idea": idea})
-        return result.content
+        return {
+            "recommendations": recommendations[:5]
+        }

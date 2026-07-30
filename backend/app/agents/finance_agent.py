@@ -1,65 +1,46 @@
-import os
-from pathlib import Path
-
-from dotenv import load_dotenv
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_groq import ChatGroq
-
-# Load the .env file from the backend directory
-BASE_DIR = Path(__file__).resolve().parents[2]
-load_dotenv(BASE_DIR / ".env")
+import pandas as pd
 
 
 class FinanceAgent:
-    def __init__(self):
-        api_key = os.getenv("GROQ_API_KEY")
+    def analyze(self, file_path: str):
+        df = pd.read_csv(file_path)
 
-        if not api_key:
-            raise ValueError(
-                "GROQ_API_KEY not found. Please create backend/.env and add:\n"
-                "GROQ_API_KEY=your_groq_api_key"
-            )
+        if df.empty:
+            return {
+                "error": "CSV file is empty"
+            }
 
-        self.llm = ChatGroq(
-            model="llama-3.3-70b-versatile",
-            api_key=api_key,
-            temperature=0.3,
-        )
+        required_columns = ["Revenue", "Expenses"]
+        missing_columns = [column for column in required_columns if column not in df.columns]
 
-        self.prompt = ChatPromptTemplate.from_template("""
-You are an experienced startup financial advisor.
+        if missing_columns:
+            return {
+                "error": f"Missing column(s): {', '.join(missing_columns)}"
+            }
 
-Analyze the following business idea.
+        revenue = float(df["Revenue"].sum())
+        expenses = float(df["Expenses"].sum())
+        profit = revenue - expenses
 
-Business Idea:
-{idea}
+        if revenue > 0:
+            expense_ratio = (expenses / revenue) * 100
+            profit_margin = (profit / revenue) * 100
+        else:
+            expense_ratio = 0.0
+            profit_margin = 0.0
 
-Generate a financial report containing:
+        if expense_ratio > 70 or profit_margin < 5:
+            risk = "High"
+        elif expense_ratio > 50 or profit_margin < 15:
+            risk = "Medium"
+        else:
+            risk = "Low"
 
-# Startup Cost Estimate
-
-# Revenue Model
-
-# Pricing Strategy
-
-# Monthly Revenue Estimate
-
-# Monthly Expenses
-
-# Profit Margin Estimate
-
-# Break-even Analysis
-
-# Funding Recommendation
-
-# Financial Risks
-
-Use realistic assumptions.
-
-Respond in professional Markdown.
-""")
-
-    def analyze(self, idea: str):
-        chain = self.prompt | self.llm
-        result = chain.invoke({"idea": idea})
-        return result.content
+        return {
+            "revenue": int(revenue),
+            "profit": int(profit),
+            "expenses": int(expenses),
+            "risk": risk,
+            "profit_margin": round(profit_margin, 2),
+            "expense_ratio": round(expense_ratio, 2),
+        }
