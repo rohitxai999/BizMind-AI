@@ -1,3 +1,6 @@
+from app.agents.manager import AgentManager
+
+
 class BusinessService:
 
     @staticmethod
@@ -7,6 +10,10 @@ class BusinessService:
         expenses = data.expenses
         customers = data.customers
         employees = data.employees
+
+        # ==========================
+        # Core KPI Analysis
+        # ==========================
 
         profit = revenue - expenses
 
@@ -48,13 +55,10 @@ class BusinessService:
 
         if health >= 85:
             growth = "Excellent"
-
         elif health >= 70:
             growth = "Strong"
-
         elif health >= 55:
             growth = "Moderate"
-
         else:
             growth = "Weak"
 
@@ -85,6 +89,23 @@ class BusinessService:
                 "Business performance is excellent."
             )
 
+        # ==========================
+        # Multi-Agent Analysis
+        # ==========================
+
+        manager = AgentManager()
+
+        agent_analysis = manager.analyze({
+            "revenue": revenue,
+            "expenses": expenses,
+            "customers": customers,
+            "employees": employees
+        })
+
+        # ==========================
+        # Final Response
+        # ==========================
+
         return {
 
             "revenue": revenue,
@@ -92,7 +113,9 @@ class BusinessService:
 
             "profit": round(profit, 2),
 
-            "profit_margin": round(profit_margin, 2),
+            "profit_margin": round(
+                profit_margin, 2
+            ),
 
             "revenue_per_employee": round(
                 revenue_per_employee, 2
@@ -110,5 +133,7 @@ class BusinessService:
 
             "growth_prediction": growth,
 
-            "recommendations": recommendations
+            "recommendations": recommendations,
+
+            "agent_analysis": agent_analysis
         }

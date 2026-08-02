@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from typing import Any
 
 
 class BusinessInput(BaseModel):
@@ -29,3 +30,6 @@ class BusinessResponse(BaseModel):
     growth_prediction: str
 
     recommendations: list[str]
+
+    # NEW
+    agent_analysis: dict[str, Any]
