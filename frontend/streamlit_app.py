@@ -462,55 +462,37 @@ if uploaded_file is not None:
 
         st.divider()
         st.subheader("🤖 BizMind AI Copilot")
+        st.caption("Ask for focused recommendations based on your current executive metrics.")
         user_question = st.text_input("Ask your business question", placeholder="Example: How can I increase profit?")
 
         if st.button("Generate AI Advice", use_container_width=True):
             question = user_question.lower()
-            if "profit" in question:
-                st.success("""
-                Increase profitability by:
-                • Reduce unnecessary operational expenses
-                • Improve pricing strategy
-                • Focus marketing on high-margin products
-                • Increase customer retention
-                • Automate repetitive processes
-                """)
-            elif "sales" in question:
-                st.success("""
-                Sales Improvement Strategy
-                • Increase digital marketing
-                • Offer seasonal discounts
-                • Improve customer experience
-                • Launch loyalty programs
-                • Expand top-performing products
-                """)
-            elif "risk" in question:
-                st.warning("""
-                Business Risk Analysis
-                • Diversify revenue streams
-                • Maintain emergency cash reserves
-                • Monitor monthly expenses
-                • Improve inventory planning
-                • Reduce supplier dependency
-                """)
-            elif "expense" in question:
-                st.info("""
-                Expense Optimization
-                • Reduce operational costs
-                • Optimize logistics
-                • Review software subscriptions
-                • Improve energy efficiency
-                • Automate manual workflows
-                """)
+            advice = []
+
+            if finance["risk"] == "High":
+                advice.append("• Prioritize cash preservation and trim discretionary spend immediately.")
+            elif finance["risk"] == "Medium":
+                advice.append("• Keep a close eye on operating leverage and review pricing discipline.")
             else:
-                st.info("""
-                General CEO Advice
-                • Monitor KPIs weekly
-                • Invest in profitable products
-                • Improve customer satisfaction
-                • Expand successful markets
-                • Make data-driven decisions
-                """)
+                advice.append("• Maintain momentum and expand on the highest-performing channels.")
+
+            if finance["profit"] < finance["revenue"] * 0.2:
+                advice.append("• Improve margin mix by prioritizing higher-margin offerings.")
+            else:
+                advice.append("• Protect profitability while scaling the most efficient products.")
+
+            if "profit" in question:
+                advice.append("• Focus on margin expansion, pricing, and expense discipline.")
+            elif "sales" in question:
+                advice.append("• Increase targeted acquisition spend and promote your best-performing offers.")
+            elif "risk" in question:
+                advice.append("• Diversify revenue sources and strengthen contingency planning.")
+            elif "expense" in question:
+                advice.append("• Reduce overhead and automate repeatable processes.")
+            else:
+                advice.append("• Monitor weekly KPIs and turn insights into immediate operating actions.")
+
+            st.success("\n".join(advice))
 
         st.divider()
         st.subheader("❤️ Executive Business Health")
