@@ -25,4 +25,4 @@ def get_dashboard():
         "profit": profit,
         "profit_margin": f"{margin}%",
         "growth": f"{growth}%"
-    }
+    }   
