@@ -4,6 +4,8 @@ from app.routes.analysis import router as analysis_router
 from app.routes.upload import router as upload_router
 from app.routes.dashboard import router as dashboard_router
 
+from app.api.dashboard import router as executive_dashboard_router
+
 app = FastAPI(
     title="BizMind AI",
     version="1.0.0",
@@ -13,6 +15,9 @@ app = FastAPI(
 app.include_router(analysis_router)
 app.include_router(upload_router)
 app.include_router(dashboard_router)
+
+# Executive Dashboard API (Day 10)
+app.include_router(executive_dashboard_router)
 
 
 @app.get("/")
