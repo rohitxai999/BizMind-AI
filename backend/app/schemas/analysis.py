@@ -9,6 +9,9 @@ class BusinessInput(BaseModel):
     customers: int
     employees: int
 
+    # Previous-period revenue
+    previous_revenue: float = 0
+
 
 class BusinessResponse(BaseModel):
 
@@ -31,5 +34,11 @@ class BusinessResponse(BaseModel):
 
     recommendations: list[str]
 
-    # NEW
+    # Multi-Agent Analysis
     agent_analysis: dict[str, Any]
+
+    # Day 11 AI Business Insights
+    ai_insights: dict[str, Any]
+
+    # Day 11 Unified Executive Assessment
+    unified_assessment: dict[str, Any]

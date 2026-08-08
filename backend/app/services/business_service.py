@@ -1,4 +1,6 @@
 from app.agents.manager import AgentManager
+from app.services.insights_engine import InsightsEngine
+from app.services.assessment.engine import UnifiedAssessmentEngine
 
 
 class BusinessService:
@@ -10,10 +12,11 @@ class BusinessService:
         expenses = data.expenses
         customers = data.customers
         employees = data.employees
+        previous_revenue = data.previous_revenue
 
-        # ==========================
+        # =========================================================
         # Core KPI Analysis
-        # ==========================
+        # =========================================================
 
         profit = revenue - expenses
 
@@ -37,21 +40,23 @@ class BusinessService:
             if revenue > 0 else 0
         )
 
-        health = 50
+        # =========================================================
+        # AI Business Insights Engine
+        # =========================================================
 
-        if profit_margin >= 30:
-            health += 20
+        insights = InsightsEngine.generate_insights(
+            revenue=revenue,
+            expenses=expenses,
+            previous_revenue=previous_revenue,
+            customers=customers,
+            employees=employees
+        )
 
-        if revenue_per_employee >= 10000:
-            health += 10
+        # =========================================================
+        # Business Health
+        # =========================================================
 
-        if customer_value >= 100:
-            health += 10
-
-        if operating_cost_ratio <= 60:
-            health += 10
-
-        health = min(100, health)
+        health = insights["health_score"]
 
         if health >= 85:
             growth = "Excellent"
@@ -62,71 +67,78 @@ class BusinessService:
         else:
             growth = "Weak"
 
-        recommendations = []
+        # =========================================================
+        # Recommendations
+        # =========================================================
 
-        if profit_margin < 20:
-            recommendations.append(
-                "Reduce operating expenses."
-            )
+        recommendations = [
+            insight["recommendation"]
+            for insight in insights["insights"]
+        ]
 
-        if operating_cost_ratio > 70:
-            recommendations.append(
-                "High operating costs detected."
-            )
+        # Remove duplicates
+        recommendations = list(
+            dict.fromkeys(recommendations)
+        )
 
-        if revenue_per_employee < 10000:
-            recommendations.append(
-                "Improve employee productivity."
-            )
-
-        if customer_value < 100:
-            recommendations.append(
-                "Increase average customer value."
-            )
-
-        if not recommendations:
-            recommendations.append(
-                "Business performance is excellent."
-            )
-
-        # ==========================
+        # =========================================================
         # Multi-Agent Analysis
-        # ==========================
+        # =========================================================
 
         manager = AgentManager()
 
-        agent_analysis = manager.analyze({
-            "revenue": revenue,
-            "expenses": expenses,
-            "customers": customers,
-            "employees": employees
-        })
+        agent_analysis = manager.analyze(
+            {
+                "revenue": revenue,
+                "expenses": expenses,
+                "customers": customers,
+                "employees": employees,
+                "previous_revenue": previous_revenue,
+            }
+        )
 
-        # ==========================
+        # =========================================================
+        # Unified Executive Assessment
+        # =========================================================
+
+        unified_assessment = (
+            UnifiedAssessmentEngine.generate_assessment(
+                insights=insights,
+                agent_analysis=agent_analysis
+            )
+        )
+
+        # =========================================================
         # Final Response
-        # ==========================
+        # =========================================================
 
         return {
-
             "revenue": revenue,
             "expenses": expenses,
 
-            "profit": round(profit, 2),
+            "profit": round(
+                profit,
+                2
+            ),
 
             "profit_margin": round(
-                profit_margin, 2
+                profit_margin,
+                2
             ),
 
             "revenue_per_employee": round(
-                revenue_per_employee, 2
+                revenue_per_employee,
+                2
             ),
 
             "customer_value": round(
-                customer_value, 2
+                customer_value,
+                2
             ),
 
             "operating_cost_ratio": round(
-                operating_cost_ratio, 2
+                operating_cost_ratio,
+                2
             ),
 
             "business_health": health,
@@ -135,5 +147,12 @@ class BusinessService:
 
             "recommendations": recommendations,
 
-            "agent_analysis": agent_analysis
+            # Multi-Agent Analysis
+            "agent_analysis": agent_analysis,
+
+            # Day 11 AI Insights
+            "ai_insights": insights,
+
+            # Day 11 Unified Assessment
+            "unified_assessment": unified_assessment,
         }
