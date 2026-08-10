@@ -1,5 +1,8 @@
 from typing import Dict, List
 
+from app.services.decision.engine import DecisionEngine
+from app.services.opportunity.engine import OpportunityEngine
+
 
 class InsightsEngine:
     """
@@ -10,6 +13,8 @@ class InsightsEngine:
     - Risk indicators
     - Performance signals
     - Recommendations
+    - AI-driven business decisions
+    - Business opportunities
     """
 
     @staticmethod
@@ -19,6 +24,7 @@ class InsightsEngine:
         previous_revenue: float = 0,
         customers: int = 0,
         employees: int = 0,
+        previous_expenses: float = 0,
     ) -> Dict:
 
         # =========================================================
@@ -42,6 +48,12 @@ class InsightsEngine:
         revenue_growth = (
             ((revenue - previous_revenue) / previous_revenue) * 100
             if previous_revenue > 0
+            else 0
+        )
+
+        expense_growth = (
+            ((expenses - previous_expenses) / previous_expenses) * 100
+            if previous_expenses > 0
             else 0
         )
 
@@ -301,6 +313,39 @@ class InsightsEngine:
             )
 
         # =========================================================
+        # AI Decision Engine
+        # =========================================================
+
+        decision_engine = DecisionEngine()
+
+        decision_analysis = decision_engine.analyze(
+            {
+                "revenue": revenue,
+                "expenses": expenses,
+                "profit": profit,
+                "revenue_growth": revenue_growth,
+                "expense_growth": expense_growth,
+            }
+        )
+
+        # =========================================================
+        # AI Opportunity Engine
+        # =========================================================
+
+        opportunity_engine = OpportunityEngine()
+
+        opportunity_analysis = opportunity_engine.analyze(
+            {
+                "revenue": revenue,
+                "profit": profit,
+                "profit_margin": profit_margin,
+                "revenue_growth": revenue_growth,
+                "customers": customers,
+                "customer_value": customer_value,
+            }
+        )
+
+        # =========================================================
         # Executive Summary
         # =========================================================
 
@@ -321,17 +366,20 @@ class InsightsEngine:
             "profit_margin": round(profit_margin, 2),
             "expense_ratio": round(expense_ratio, 2),
             "revenue_growth": round(revenue_growth, 2),
+            "expense_growth": round(expense_growth, 2),
             "revenue_per_employee": round(
                 revenue_per_employee,
-                2
+                2,
             ),
             "customer_value": round(
                 customer_value,
-                2
+                2,
             ),
             "health_score": health_score,
             "risk_level": risk_level,
             "performance_status": performance_status,
             "executive_summary": executive_summary,
             "insights": insights,
+            "decision_analysis": decision_analysis.model_dump(),
+            "opportunity_analysis": opportunity_analysis.model_dump(),
         }
