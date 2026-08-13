@@ -2,6 +2,7 @@ from typing import Dict, List
 
 from app.services.decision.engine import DecisionEngine
 from app.services.opportunity.engine import OpportunityEngine
+from app.services.executive.engine import ExecutiveEngine
 
 
 class InsightsEngine:
@@ -15,6 +16,7 @@ class InsightsEngine:
     - Recommendations
     - AI-driven business decisions
     - Business opportunities
+    - Executive-level priorities
     """
 
     @staticmethod
@@ -346,6 +348,20 @@ class InsightsEngine:
         )
 
         # =========================================================
+        # Executive Intelligence Engine
+        # =========================================================
+
+        executive_engine = ExecutiveEngine()
+
+        executive_analysis = (
+            executive_engine.generate_executive_actions(
+                insights=insights,
+                decision_analysis=decision_analysis,
+                opportunity_analysis=opportunity_analysis,
+            )
+        )
+
+        # =========================================================
         # Executive Summary
         # =========================================================
 
@@ -382,4 +398,5 @@ class InsightsEngine:
             "insights": insights,
             "decision_analysis": decision_analysis.model_dump(),
             "opportunity_analysis": opportunity_analysis.model_dump(),
+            "executive_analysis": executive_analysis,
         }

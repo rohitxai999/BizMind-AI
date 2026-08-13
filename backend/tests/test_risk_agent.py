@@ -1,12 +1,14 @@
-from agents.risk.agent import RiskAgent
+from app.agents.risk.agent import RiskAgent
 
-agent = RiskAgent()
 
-sample_data = {
-    "debt": 50000,
-    "cash": 100000
-}
+def test_risk_agent():
+    agent = RiskAgent()
 
-result = agent.analyze(sample_data)
+    sample_data = {
+        "debt": 50000,
+        "cash": 100000,
+    }
 
-print(result)
+    result = agent.analyze(sample_data)
+
+    assert result is not None

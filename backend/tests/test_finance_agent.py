@@ -1,12 +1,14 @@
-from agents.finance.agent import FinanceAgent
+from app.agents.finance.agent import FinanceAgent
 
-agent = FinanceAgent()
 
-sample_data = {
-    "revenue": 250000,
-    "expenses": 175000
-}
+def test_finance_agent():
+    agent = FinanceAgent()
 
-result = agent.analyze(sample_data)
+    sample_data = {
+        "revenue": 250000,
+        "expenses": 175000,
+    }
 
-print(result)
+    result = agent.analyze(sample_data)
+
+    assert result is not None

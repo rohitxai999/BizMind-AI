@@ -1,4 +1,4 @@
-from agents.base_agent import BaseAgent
+from app.agents.base_agent import BaseAgent
 
 
 class DemoAgent(BaseAgent):
@@ -9,11 +9,16 @@ class DemoAgent(BaseAgent):
     def analyze(self, data):
         return {
             "message": "BaseAgent is working!",
-            "input": data
+            "input": data,
         }
 
 
-agent = DemoAgent()
+def test_base_agent():
+    agent = DemoAgent()
 
-print(agent.metadata())
-print(agent.analyze({"value": 100}))
+    metadata = agent.metadata()
+    result = agent.analyze({"value": 100})
+
+    assert metadata is not None
+    assert result["message"] == "BaseAgent is working!"
+    assert result["input"]["value"] == 100

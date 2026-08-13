@@ -1,20 +1,20 @@
-from pprint import pprint
+from app.agents.manager import AgentManager
 
-from agents.manager import AgentManager
 
-manager = AgentManager()
+def test_agent_manager_analyze():
+    manager = AgentManager()
 
-sample_data = {
-    "revenue": 250000,
-    "expenses": 175000,
-    "sales": 92,
-    "sales_target": 100,
-    "campaigns": 5,
-    "leads": 75,
-    "debt": 50000,
-    "cash": 100000
-}
+    sample_data = {
+        "revenue": 250000,
+        "expenses": 175000,
+        "sales": 92,
+        "sales_target": 100,
+        "campaigns": 5,
+        "leads": 75,
+        "debt": 50000,
+        "cash": 100000,
+    }
 
-result = manager.analyze(sample_data)
+    result = manager.analyze(sample_data)
 
-pprint(result)
+    assert result is not None

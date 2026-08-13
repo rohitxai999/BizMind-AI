@@ -1,12 +1,14 @@
-from agents.sales.agent import SalesAgent
+from app.agents.sales.agent import SalesAgent
 
-agent = SalesAgent()
 
-sample_data = {
-    "sales": 92,
-    "sales_target": 100
-}
+def test_sales_agent():
+    agent = SalesAgent()
 
-result = agent.analyze(sample_data)
+    sample_data = {
+        "sales": 92,
+        "sales_target": 100,
+    }
 
-print(result)
+    result = agent.analyze(sample_data)
+
+    assert result is not None
