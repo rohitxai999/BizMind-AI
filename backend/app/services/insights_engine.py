@@ -3,6 +3,7 @@ from typing import Dict, List
 from app.services.decision.engine import DecisionEngine
 from app.services.opportunity.engine import OpportunityEngine
 from app.services.executive.engine import ExecutiveEngine
+from app.services.risk.engine import RiskEngine
 
 
 class InsightsEngine:
@@ -11,7 +12,7 @@ class InsightsEngine:
 
     Converts business KPIs into:
     - Business insights
-    - Risk indicators
+    - Centralized risk indicators
     - Performance signals
     - Recommendations
     - AI-driven business decisions
@@ -98,15 +99,22 @@ class InsightsEngine:
         health_score = max(0, min(100, health_score))
 
         # =========================================================
-        # Risk Classification
+        # Centralized Risk Engine
         # =========================================================
 
-        if health_score >= 80:
-            risk_level = "Low"
-        elif health_score >= 60:
-            risk_level = "Medium"
-        else:
-            risk_level = "High"
+        risk_analysis = RiskEngine.calculate(
+            {
+                "revenue": revenue,
+                "expenses": expenses,
+                "profit": profit,
+                "revenue_growth": revenue_growth,
+            }
+        )
+
+        risk_score = risk_analysis["risk_score"]
+        risk_level = risk_analysis["risk_level"]
+        risk_factors = risk_analysis["risk_factors"]
+        risk_explanation = risk_analysis["risk_explanation"]
 
         # =========================================================
         # Business Performance Status
@@ -368,7 +376,8 @@ class InsightsEngine:
         executive_summary = (
             f"Business performance is {performance_status.lower()} "
             f"with a health score of {health_score}/100. "
-            f"Current risk level is {risk_level.lower()}."
+            f"Current risk level is {risk_level.lower()} "
+            f"with a risk score of {risk_score}/100."
         )
 
         # =========================================================
@@ -392,7 +401,10 @@ class InsightsEngine:
                 2,
             ),
             "health_score": health_score,
+            "risk_score": risk_score,
             "risk_level": risk_level,
+            "risk_factors": risk_factors,
+            "risk_explanation": risk_explanation,
             "performance_status": performance_status,
             "executive_summary": executive_summary,
             "insights": insights,

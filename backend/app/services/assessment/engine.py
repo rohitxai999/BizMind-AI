@@ -5,6 +5,9 @@ class UnifiedAssessmentEngine:
     """
     Combines Insights Engine and multi-agent results
     into a single executive-level business assessment.
+
+    Uses the centralized RiskEngine result provided
+    by InsightsEngine as the authoritative risk assessment.
     """
 
     @staticmethod
@@ -27,7 +30,7 @@ class UnifiedAssessmentEngine:
             title = insight.get("title", "")
             recommendation = insight.get(
                 "recommendation",
-                ""
+                "",
             )
 
             if severity == "Positive":
@@ -47,7 +50,7 @@ class UnifiedAssessmentEngine:
 
         agent_results = agent_analysis.get(
             "results",
-            []
+            [],
         )
 
         agent_risks: List[str] = []
@@ -59,10 +62,13 @@ class UnifiedAssessmentEngine:
 
             agent_name = result.get(
                 "agent",
-                "Unknown Agent"
+                "Unknown Agent",
             )
 
-            # Finance
+            # -----------------------------------------------------
+            # Finance Agent
+            # -----------------------------------------------------
+
             if agent_name == "Finance Agent":
 
                 financial_health = result.get(
@@ -79,7 +85,10 @@ class UnifiedAssessmentEngine:
                         "Finance Agent reports a business loss."
                     )
 
-            # Sales
+            # -----------------------------------------------------
+            # Sales Agent
+            # -----------------------------------------------------
+
             elif agent_name == "Sales Agent":
 
                 performance = result.get(
@@ -88,7 +97,7 @@ class UnifiedAssessmentEngine:
 
                 if performance in {
                     "Excellent",
-                    "Good"
+                    "Good",
                 }:
                     key_strengths.append(
                         f"Sales performance is {performance.lower()}."
@@ -99,7 +108,10 @@ class UnifiedAssessmentEngine:
                         "Sales performance requires improvement."
                     )
 
-            # Marketing
+            # -----------------------------------------------------
+            # Marketing Agent
+            # -----------------------------------------------------
+
             elif agent_name == "Marketing Agent":
 
                 marketing_status = result.get(
@@ -108,7 +120,7 @@ class UnifiedAssessmentEngine:
 
                 if marketing_status in {
                     "Excellent Growth",
-                    "Growing"
+                    "Growing",
                 }:
                     key_strengths.append(
                         f"Marketing status: {marketing_status}."
@@ -119,7 +131,10 @@ class UnifiedAssessmentEngine:
                         "Marketing performance needs improvement."
                     )
 
-            # Risk
+            # -----------------------------------------------------
+            # Risk Agent
+            # -----------------------------------------------------
+
             elif agent_name == "Risk Agent":
 
                 risk_level = result.get(
@@ -136,11 +151,51 @@ class UnifiedAssessmentEngine:
                         "Risk Agent identified medium business risk."
                     )
 
+                elif risk_level == "Low":
+                    key_strengths.append(
+                        "Risk Agent reports low business risk."
+                    )
+
         # =========================================================
         # Merge Agent Risks
         # =========================================================
 
         key_risks.extend(agent_risks)
+
+        # =========================================================
+        # Centralized Risk Assessment
+        # =========================================================
+
+        overall_risk = insights.get(
+            "risk_level",
+            "Medium",
+        )
+
+        risk_score = insights.get(
+            "risk_score",
+            50,
+        )
+
+        risk_factors = insights.get(
+            "risk_factors",
+            [],
+        )
+
+        risk_explanation = insights.get(
+            "risk_explanation",
+            "Risk assessment is based on current business performance.",
+        )
+
+        # Add centralized risk factors to key risks
+
+        if isinstance(risk_factors, list):
+
+            for factor in risk_factors:
+
+                if factor:
+                    key_risks.append(
+                        str(factor)
+                    )
 
         # =========================================================
         # Remove Duplicates
@@ -159,70 +214,23 @@ class UnifiedAssessmentEngine:
         )
 
         # =========================================================
-        # Determine Overall Risk
-        # =========================================================
-
-        insight_risk = insights.get(
-            "risk_level",
-            "Medium"
-        )
-
-        risk_levels = []
-
-        if insight_risk == "High":
-            risk_levels.append(3)
-        elif insight_risk == "Medium":
-            risk_levels.append(2)
-        else:
-            risk_levels.append(1)
-
-        for result in agent_results:
-
-            if result.get("agent") != "Risk Agent":
-                continue
-
-            risk_level = result.get(
-                "risk_level",
-                "Medium"
-            )
-
-            if risk_level == "High":
-                risk_levels.append(3)
-
-            elif risk_level == "Medium":
-                risk_levels.append(2)
-
-            else:
-                risk_levels.append(1)
-
-        average_risk = (
-            sum(risk_levels) / len(risk_levels)
-            if risk_levels
-            else 2
-        )
-
-        if average_risk >= 2.5:
-            overall_risk = "High"
-        elif average_risk >= 1.5:
-            overall_risk = "Medium"
-        else:
-            overall_risk = "Low"
-
-        # =========================================================
         # Overall Status
         # =========================================================
 
         health_score = insights.get(
             "health_score",
-            0
+            0,
         )
 
         if health_score >= 85:
             overall_status = "Excellent"
+
         elif health_score >= 70:
             overall_status = "Strong"
+
         elif health_score >= 50:
             overall_status = "Moderate"
+
         else:
             overall_status = "Weak"
 
@@ -249,7 +257,7 @@ class UnifiedAssessmentEngine:
                 (health_score / 100) * 0.6
                 + agent_confidence * 0.4
             ),
-            2
+            2,
         )
 
         # =========================================================
@@ -260,6 +268,7 @@ class UnifiedAssessmentEngine:
             f"Overall business status is "
             f"{overall_status.lower()} with "
             f"{overall_risk.lower()} risk. "
+            f"Risk score is {risk_score}/100. "
             f"BizMind analyzed the business using "
             f"the KPI intelligence engine and "
             f"{successful_agents} successful AI agents."
@@ -272,6 +281,9 @@ class UnifiedAssessmentEngine:
         return {
             "overall_status": overall_status,
             "overall_risk": overall_risk,
+            "risk_score": risk_score,
+            "risk_factors": risk_factors,
+            "risk_explanation": risk_explanation,
             "confidence": confidence,
             "health_score": health_score,
             "key_strengths": key_strengths,
