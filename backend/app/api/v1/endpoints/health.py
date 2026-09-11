@@ -20,6 +20,7 @@ def system_health():
             "opportunity_engine": "online",
             "executive_engine": "online",
             "scenario_simulator": "online",
+            "predictive_analytics": "online",
             "multi_agent_system": "online",
         },
     }

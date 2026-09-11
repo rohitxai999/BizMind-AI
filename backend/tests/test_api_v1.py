@@ -154,3 +154,33 @@ def test_root_and_legacy_health():
     health_resp = client.get("/health")
     assert health_resp.status_code == 200
     assert health_resp.json()["status"] == "healthy"
+
+
+def test_v1_forecast_predict():
+    payload = {
+        "historical_data": [
+            {"period": "Month 1", "revenue": 100000, "expenses": 60000},
+            {"period": "Month 2", "revenue": 115000, "expenses": 65000},
+            {"period": "Month 3", "revenue": 130000, "expenses": 70000},
+        ],
+        "forecast_periods": 3,
+        "confidence_level": 0.90,
+    }
+    response = client.post("/api/v1/forecast/predict", json=payload)
+    assert response.status_code == 200
+    data = response.json()
+    assert data["forecast_horizon"] == 3
+    assert len(data["forecasted_periods"]) == 3
+    assert "projected_annual_run_rate" in data
+    assert "executive_takeaway" in data
+    assert data["forecasted_periods"][0]["predicted_revenue"] > 0
+
+
+def test_v1_forecast_sample():
+    response = client.post("/api/v1/forecast/sample?periods=4")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["forecast_horizon"] == 4
+    assert len(data["forecasted_periods"]) == 4
+    assert "trend_analysis" in data
+

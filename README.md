@@ -1,11 +1,11 @@
 # 🧠 BizMind AI - Autonomous Business Intelligence Platform
 
-[![Build & Test Status](https://img.shields.io/badge/Tests-30%20Passed-brightgreen)](https://github.com/rohitxai999/BizMind-AI)
-[![Milestone](https://img.shields.io/badge/Milestone-Day%2015%20of%2044-blue)](https://github.com/rohitxai999/BizMind-AI)
+[![Build & Test Status](https://img.shields.io/badge/Tests-38%20Passed-brightgreen)](https://github.com/rohitxai999/BizMind-AI)
+[![Milestone](https://img.shields.io/badge/Milestone-Day%2016%20of%2044-blue)](https://github.com/rohitxai999/BizMind-AI)
 [![FastAPI](https://img.shields.io/badge/FastAPI-v0.139-009688.svg)](https://fastapi.tiangolo.com)
 [![Python](https://img.shields.io/badge/Python-3.14%2B-blue.svg)](https://python.org)
 
-**BizMind AI** is a production-ready, portfolio-quality AI business intelligence and autonomous decision support platform designed to turn raw business KPIs into actionable executive intelligence, risk evaluations, and simulated strategic pathways.
+**BizMind AI** is a production-ready, portfolio-quality AI business intelligence and autonomous decision support platform designed to turn raw business KPIs into actionable executive intelligence, predictive forecasts, risk evaluations, and simulated strategic pathways.
 
 ---
 
@@ -20,12 +20,11 @@ BizMind AI is an intensive 44-day build towards an enterprise-ready autonomous b
 - **Day 12**: Explainable Decision Engine and Opportunity Discovery Engine with evidence cards.
 - **Day 13**: Executive Intelligence Engine and prioritized strategic action synthesis.
 - **Day 14**: Centralized Business Risk Engine for standardized, explainable risk scoring (0-100).
-- **Day 15 (Current Milestone)**:
-  - **Business Scenario Simulator**: What-if simulation, sensitivity analysis, pre-packaged industry stress tests, and multi-scenario comparison.
-  - **Centralized Configuration & Structured Logging**: Pydantic-based configuration management (`app.core.config`) and centralized logging (`app.core.logging`).
-  - **Clean Versioned API Architecture**: Standardized `/api/v1` structure with CORS support and robust error handling.
-  - **Standalone Risk Engine API**: Dedicated endpoint for direct risk calculation.
-  - **Expanded Test Suite**: 30 comprehensive automated tests covering all engines and APIs.
+- **Day 15**: Business Scenario Simulator (what-if analysis, pre-packaged stress tests, multi-scenario comparison), clean versioned API (`/api/v1`), and centralized configuration/logging.
+- **Day 16 (Current Milestone)**:
+  - **Predictive Analytics & Forecasting Engine**: Time-series statistical trend extrapolation, exponential trend fitting, prediction confidence bands, historical anomaly detection, and forward risk trajectory evaluation via `RiskEngine`.
+  - **Forecast API Endpoints**: Dedicated `/api/v1/forecast/predict` and `/api/v1/forecast/sample` endpoints.
+  - **Comprehensive Test Suite**: Expanded to **38 automated tests** covering all AI/BI engines, forecasting models, and API routes.
 
 ---
 
@@ -41,6 +40,7 @@ graph TD
     subgraph "AI & Business Intelligence Engines"
         V1Router --> RiskEngine[Risk Engine (Day 14)]
         V1Router --> SimEngine[Scenario Simulator Engine (Day 15)]
+        V1Router --> ForecastEngine[Predictive Analytics & Forecasting (Day 16)]
         V1Router --> DecisionEngine[Decision Engine (Day 12)]
         V1Router --> OppEngine[Opportunity Engine (Day 12)]
         V1Router --> ExecEngine[Executive Intelligence Engine (Day 13)]
@@ -55,6 +55,7 @@ graph TD
         AgentManager --> RiskAgent[Risk Agent]
     end
 
+    ForecastEngine --> RiskEngine
     SimEngine --> RiskEngine
     InsightsEngine --> RiskEngine
     InsightsEngine --> DecisionEngine
@@ -64,30 +65,33 @@ graph TD
 
 ---
 
-## 🌟 Key Features (Day 15)
+## 🌟 Key Capabilities
 
-### 1. Business Scenario Simulator (`app.services.simulator.engine`)
+### 1. Predictive Analytics & Forecasting Engine (`app.services.forecast.engine`) - *New in Day 16*
+- **Time-Series Extrapolation**: Multi-period forward forecasting for top-line revenue and operational expenses.
+- **Dynamic Prediction Bands**: Statistical confidence intervals (80%, 90%, 95%) modeling uncertainty growth across future forecast horizons.
+- **Forward Risk Projection**: Evaluates projected future financials through the centralized `RiskEngine` to predict future risk scores, levels, and trajectories (*Improving*, *Deteriorating*, or *Stable*).
+- **Historical Anomaly Detection**: Scans time-series data using Z-score outlier detection ($|z| \ge 2.0$) to highlight anomalous periods.
+- **Annual Run-Rate & Momentum Analysis**: Evaluates revenue momentum direction, expense expansion pacing, and coefficient of variation volatility scores.
+
+### 2. Business Scenario Simulator (`app.services.simulator.engine`) - *Day 15*
 - **What-If Simulations**: Quantify impact on revenue, expenses, headcount, customer volume, profit margins, and health score.
 - **Risk Trajectory Modeling**: Evaluates how simulated levers alter business risk scores (0–100) using the centralized `RiskEngine`.
-- **Pre-packaged Stress Tests**:
-  - *Recession Stress Test* (-20% revenue, +5% expenses)
-  - *Aggressive Expansion* (+25% revenue, +18% expenses, +3 staff)
-  - *Cost Optimization* (-15% expenses)
-  - *Pricing Power & Margin Expansion* (+10% revenue, 0% expenses)
-  - *Severe Supply / Cost Shock* (-10% revenue, +15% expenses)
-- **Multi-Scenario Comparison**: Benchmarks scenarios side-by-side to recommend the optimal strategic path that balances net profit against downside risk.
+- **Pre-packaged Stress Tests**: *Recession Stress Test*, *Aggressive Expansion*, *Cost Optimization*, *Pricing Power*, and *Severe Supply/Cost Shock*.
+- **Multi-Scenario Comparison**: Benchmarks scenarios side-by-side to recommend the optimal strategic path.
 
-### 2. Centralized Configuration & Structured Logging (`app.core`)
-- Centralized settings managed with `pydantic-settings` reading from `.env` or system environment.
-- Configurable CORS origins, environment modes (`development`, `production`), and logging levels.
-- Unified structured logger for tracing engine operations.
+### 3. Centralized Risk Engine (`app.services.risk.engine`) - *Day 14*
+- Standardized, explainable risk scoring (0–100) and risk level assignment (*Low*, *Medium*, *High*, *Critical*).
+- Evaluates profit margin, expense ratio, and growth momentum with explicit factor drivers.
 
-### 3. Versioned REST API (`/api/v1`)
+### 4. Versioned REST API (`/api/v1`)
 Full separation of concerns with clean schemas, strong typing, and input validation:
 
 | Method | Endpoint | Description |
 |---|---|---|
 | `GET` | `/api/v1/health` | Health check & AI/BI engines readiness status |
+| `POST` | `/api/v1/forecast/predict` | Generate time-series forecasts with confidence bands and future risk |
+| `POST` | `/api/v1/forecast/sample` | Generate benchmark sample forecast |
 | `POST` | `/api/v1/risk/calculate` | Direct risk score, level, and driver calculation |
 | `POST` | `/api/v1/scenarios/simulate` | Run custom what-if scenario simulation |
 | `POST` | `/api/v1/scenarios/compare` | Compare multiple scenarios side-by-side |
@@ -119,7 +123,7 @@ cp .env.example .env
 cd backend
 python -m pytest tests -v
 ```
-All **30 tests** will run and validate the multi-agent system, engines, and API endpoints.
+All **38 tests** will run and validate the multi-agent system, predictive analytics engine, scenario simulator, and API endpoints.
 
 ### 4. Start the Backend Server
 ```bash
@@ -130,6 +134,6 @@ Interactive API documentation will be available at [http://127.0.0.1:8000/docs](
 
 ---
 
-## 📋 Recommended Day 16 Objective
-- **Predictive Analytics & Forecasting Engine**: Introduce time-series revenue and expense forecasting (Holt-Winters / ARIMA / Prophet foundation) integrated into the executive dashboard.
-- **Database Persistence**: Integrate SQLAlchemy / PostgreSQL repository layer for scenario save/history and executive audit logs.
+## 📋 Recommended Day 17 Objective
+- **AI Business Copilot Service (`CopilotEngine`)**: Interactive conversational business assistant capable of querying multi-agent outputs, scenario simulations, and forecasts with natural language reasoning.
+- **Database Persistence**: Integrate SQLAlchemy / SQLite / PostgreSQL repository layer to persist simulation runs, forecast snapshots, and executive audit logs.
