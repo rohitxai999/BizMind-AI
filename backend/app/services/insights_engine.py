@@ -407,6 +407,11 @@ class InsightsEngine:
             "risk_explanation": risk_explanation,
             "performance_status": performance_status,
             "executive_summary": executive_summary,
+            "recommendations": [
+                i.get("recommendation", "")
+                for i in insights
+                if i.get("recommendation")
+            ],
             "insights": insights,
             "decision_analysis": decision_analysis.model_dump(),
             "opportunity_analysis": opportunity_analysis.model_dump(),

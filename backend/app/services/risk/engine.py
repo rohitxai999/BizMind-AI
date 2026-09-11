@@ -47,15 +47,14 @@ class RiskEngine:
         revenue = float(data.get("revenue", 0))
         expenses = float(data.get("expenses", 0))
 
-        profit = float(
-            data.get(
-                "profit",
-                revenue - expenses,
-            )
-        )
+        profit_val = data.get("profit")
+        if profit_val is None:
+            profit = revenue - expenses
+        else:
+            profit = float(profit_val)
 
         revenue_growth = float(
-            data.get("revenue_growth", 0)
+            data.get("revenue_growth", 0) or 0
         )
 
         # ---------------------------------------------------------
