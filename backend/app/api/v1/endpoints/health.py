@@ -22,5 +22,7 @@ def system_health():
             "scenario_simulator": "online",
             "predictive_analytics": "online",
             "multi_agent_system": "online",
+            "copilot_engine": "online",
+            "multi_agent_orchestrator": "online",
         },
     }

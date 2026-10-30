@@ -50,16 +50,19 @@ with st.sidebar:
     st.title("🧠 BizMind AI")
     st.caption("Executive Intelligence Platform")
     st.divider()
-    st.success("🟢 Data Agent Online")
-    st.success("🟢 Finance Agent Online")
-    st.success("🟢 Health Agent Online")
-    st.success("🟢 Strategy Agent Online")
+    st.success("🟢 Finance Intelligence Agent Online")
+    st.success("🟢 Sales Intelligence Agent Online")
+    st.success("🟢 Marketing Intelligence Agent Online")
+    st.success("🟢 Risk & Compliance Agent Online")
+    st.success("🟢 Operations & Strategy Agent Online")
+    st.success("🟢 AI Business Copilot Online")
     st.divider()
     st.metric("Platform Status", "ONLINE")
-    st.metric("Running Agents", "4")
-    st.metric("Version", "Day 5")
+    st.metric("Running Agents", "5 Specialized + Copilot")
+    st.metric("Version", "Day 18")
     st.divider()
-    st.info("Upload a business CSV and run AI analysis to generate executive insights.")
+    st.info("Upload a business CSV or navigate to the Copilot page for conversational multi-agent intelligence.")
+
 
 
 def compute_local_finance(df):

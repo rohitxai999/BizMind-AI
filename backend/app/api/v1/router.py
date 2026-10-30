@@ -6,6 +6,8 @@ from app.api.v1.endpoints.decisions import router as decisions_router
 from app.api.v1.endpoints.opportunities import router as opportunities_router
 from app.api.v1.endpoints.dashboard import router as dashboard_router
 from app.api.v1.endpoints.forecast import router as forecast_router
+from app.api.v1.endpoints.copilot import router as copilot_router
+from app.api.v1.endpoints.agents import router as agents_router
 
 api_v1_router = APIRouter()
 
@@ -16,3 +18,6 @@ api_v1_router.include_router(decisions_router)
 api_v1_router.include_router(opportunities_router)
 api_v1_router.include_router(dashboard_router)
 api_v1_router.include_router(forecast_router)
+api_v1_router.include_router(copilot_router)
+api_v1_router.include_router(agents_router)
+

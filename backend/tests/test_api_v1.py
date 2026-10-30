@@ -12,6 +12,9 @@ def test_v1_health_endpoint():
     assert "engines" in data
     assert data["engines"]["risk_engine"] == "online"
     assert data["engines"]["scenario_simulator"] == "online"
+    assert data["engines"]["copilot_engine"] == "online"
+    assert data["engines"]["multi_agent_orchestrator"] == "online"
+
 
 
 def test_v1_risk_calculate():
@@ -183,4 +186,104 @@ def test_v1_forecast_sample():
     assert data["forecast_horizon"] == 4
     assert len(data["forecasted_periods"]) == 4
     assert "trend_analysis" in data
+
+
+def test_v1_copilot_query_scenario():
+    payload = {
+        "query": "What if revenue drops by 15%?",
+        "business_data": {
+            "revenue": 200000,
+            "expenses": 140000,
+            "customers": 100,
+            "employees": 8,
+        },
+    }
+    response = client.post("/api/v1/copilot/query", json=payload)
+    assert response.status_code == 200
+    data = response.json()
+    assert data["intent"] == "SCENARIO_SIMULATION"
+    assert "answer" in data
+    assert "projected_revenue" in data["data_evidence"]
+    assert "session_id" in data
+
+
+def test_v1_copilot_query_risk():
+    payload = {
+        "query": "What is our current risk score and financial risk level?",
+        "business_data": {
+            "revenue": 150000,
+            "expenses": 130000,
+            "profit": 20000,
+            "revenue_growth": -2.0,
+        },
+    }
+    response = client.post("/api/v1/copilot/query", json=payload)
+    assert response.status_code == 200
+    data = response.json()
+    assert data["intent"] == "RISK_ANALYSIS"
+    assert "risk_score" in data["data_evidence"]
+
+
+def test_v1_copilot_synthesize():
+    payload = {
+        "business_data": {
+            "revenue": 300000,
+            "expenses": 180000,
+            "customers": 200,
+            "employees": 10,
+        }
+    }
+    response = client.post("/api/v1/copilot/synthesize", json=payload)
+    assert response.status_code == 200
+    data = response.json()
+    assert "consensus_score" in data
+    assert len(data["perspectives"]) == 5
+    assert len(data["prioritized_recommendations"]) >= 1
+
+
+def test_v1_copilot_history_and_clear():
+    # Make a query to populate history
+    client.post(
+        "/api/v1/copilot/query",
+        json={"query": "Give me a company health diagnosis", "session_id": "test-session-1"},
+    )
+
+    # Get history
+    hist_resp = client.get("/api/v1/copilot/history?session_id=test-session-1")
+    assert hist_resp.status_code == 200
+    hist_data = hist_resp.json()
+    assert hist_data["total_records"] >= 1
+
+    # Clear history
+    del_resp = client.delete("/api/v1/copilot/history?session_id=test-session-1")
+    assert del_resp.status_code == 200
+    assert del_resp.json()["status"] == "success"
+
+
+def test_v1_agents_collaborate():
+    payload = {
+        "business_data": {
+            "revenue": 250000,
+            "expenses": 150000,
+            "customers": 180,
+            "employees": 9,
+        }
+    }
+    response = client.post("/api/v1/agents/collaborate", json=payload)
+    assert response.status_code == 200
+    data = response.json()
+    assert data["consensus_score"] >= 0
+    assert len(data["perspectives"]) == 5
+
+
+def test_v1_agents_list():
+    response = client.get("/api/v1/agents/list")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["total_agents"] == 5
+    assert len(data["agents"]) == 5
+    agent_names = [a["name"] for a in data["agents"]]
+    assert "Finance Intelligence Agent" in agent_names
+    assert "Risk & Compliance Agent" in agent_names
+
 

@@ -16,6 +16,8 @@ class Settings(BaseSettings):
     CORS_ORIGINS: List[str] = ["*"]
     LOG_LEVEL: str = "INFO"
     UPLOAD_DIR: str = "uploads"
+    COPILOT_DB_PATH: str = "data/copilot_audit.db"
+
 
     model_config = SettingsConfigDict(
         env_file=".env",
